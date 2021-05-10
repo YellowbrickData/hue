@@ -1733,6 +1733,8 @@ ${ commonheader(_("Importer"), "indexer", user, request, "60px") | n,unicode }
       self.sampleCols.subscribe(refreshTemporaryTable);
       % if ENABLE_DIRECT_UPLOAD.get():
         self.inputFormat = ko.observable(wizard.prefill.source_type() ? wizard.prefill.source_type() : 'localfile');
+        wizard.prefill.target_type('table');
+        wizard.prefill.source_type('all');
       % else:
         self.inputFormat = ko.observable(wizard.prefill.source_type() ? wizard.prefill.source_type() : 'file');
       % endif
