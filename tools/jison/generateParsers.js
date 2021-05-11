@@ -227,10 +227,14 @@ const invalid = [];
 
 let all = false;
 
-const listDir = folder =>
-  new Promise(resolve => {
-    fs.readdir(folder, (err, files) => {
-      resolve(files);
+const listDir = (folder, entries) =>
+  new Promise((resolve, reject) => {
+    fs.readdir(folder, {withFileTypes: !!entries}, (err, files) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(files);
+      }
     });
   });
 
@@ -341,6 +345,32 @@ const copyTests = (source, target) =>
       .catch(reject);
   });
 
+const copyJisonDir = (source, target, returnFiles) => {
+  console.log('copy dir', source, target);
+  return mkdir(JISON_FOLDER + 'sql/' + target)
+    .then(() => {
+      listDir(JISON_FOLDER + 'sql/' + source, true).then(files => {
+        const copyPromises = [];
+        files.filter(f => f.isFile()).map(f => f.name).forEach(file => {
+          returnFiles.push(file);
+          copyPromises.push(
+            copyFile(
+              JISON_FOLDER + 'sql/' + source + '/' + file,
+              JISON_FOLDER + 'sql/' + target + '/' + file
+            )
+          );
+        });
+        files.filter(f => f.isDirectory()).map(dir => {
+          copyPromises.push(copyJisonDir(source + '/' + dir.name, target + '/' + dir.name, []));
+        });
+        return Promise.all(copyPromises);
+      });
+    })
+    .catch(err => {
+      console.log(err);
+    });
+}
+
 const prepareForNewParser = () =>
   new Promise((resolve, reject) => {
     if (process.argv.length === 3 && process.argv[0] === '-new') {
@@ -353,53 +383,36 @@ const prepareForNewParser = () =>
       if (
         !Object.keys(parserDefinitions).some(key => {
           if (key.indexOf(source) === 0) {
+            const files = [];
             copyTests(source, target)
+              .then(() => copyJisonDir(source, target, files))
               .then(() => {
-                mkdir(JISON_FOLDER + 'sql/' + target)
-                  .then(() => {
-                    listDir(JISON_FOLDER + 'sql/' + source).then(files => {
-                      const copyPromises = [];
-                      files.forEach(file => {
-                        copyPromises.push(
-                          copyFile(
-                            JISON_FOLDER + 'sql/' + source + '/' + file,
-                            JISON_FOLDER + 'sql/' + target + '/' + file
-                          )
-                        );
-                      });
-                      Promise.all(copyPromises).then(() => {
-                        const autocompleteSources = [
-                          'sql/' + target + '/autocomplete_header.jison'
-                        ];
-                        const syntaxSources = ['sql/' + target + '/syntax_header.jison'];
+                const autocompleteSources = [
+                  'sql/' + target + '/autocomplete_header.jison'
+                ];
+                const syntaxSources = ['sql/' + target + '/syntax_header.jison'];
 
-                        files.forEach(file => {
-                          if (file.indexOf('sql_') === 0) {
-                            autocompleteSources.push('sql/' + target + '/' + file);
-                            syntaxSources.push('sql/' + target + '/' + file);
-                          }
-                        });
-                        autocompleteSources.push('sql/' + target + '/autocomplete_footer.jison');
-                        syntaxSources.push('sql/' + target + '/syntax_footer.jison');
-                        mkdir(PARSER_FOLDER + target).then(() => {
-                          copyFile(
-                            PARSER_FOLDER + source + '/sqlParseSupport.js',
-                            PARSER_FOLDER + target + '/sqlParseSupport.js',
-                            contents =>
-                              contents.replace(
-                                /parser\.yy\.activeDialect = '[^']+';'/g,
-                                "parser.yy.activeDialect = '" + target + "';"
-                              )
-                          ).then(() => {
-                            identifySqlParsers().then(resolve).catch(reject);
-                          });
-                        });
-                      });
-                    });
-                  })
-                  .catch(err => {
-                    console.log(err);
+                files.forEach(file => {
+                  if (file.indexOf('sql_') === 0) {
+                    autocompleteSources.push('sql/' + target + '/' + file);
+                    syntaxSources.push('sql/' + target + '/' + file);
+                  }
+                });
+                autocompleteSources.push('sql/' + target + '/autocomplete_footer.jison');
+                syntaxSources.push('sql/' + target + '/syntax_footer.jison');
+                return mkdir(PARSER_FOLDER + target).then(() => {
+                  return copyFile(
+                    PARSER_FOLDER + source + '/sqlParseSupport.js',
+                    PARSER_FOLDER + target + '/sqlParseSupport.js',
+                    contents =>
+                      contents.replace(
+                        /parser\.yy\.activeDialect = '[^']+';'/g,
+                        "parser.yy.activeDialect = '" + target + "';"
+                      )
+                  ).then(() => {
+                    return identifySqlParsers().then(resolve).catch(reject);
                   });
+                });
               })
               .catch(reject);
             return true;
