@@ -31,7 +31,8 @@ const AUTOCOMPLETE_MODULES = {
   impala: () => import(/* webpackChunkName: "impala-parser" */ 'parse/sql/impala/impalaAutocompleteParser'),
   ksql: () => import(/* webpackChunkName: "ksql-parser" */ 'parse/sql/ksql/ksqlAutocompleteParser'),
   phoenix: () => import(/* webpackChunkName: "phoenix-parser" */ 'parse/sql/phoenix/phoenixAutocompleteParser'),
-  presto: () => import(/* webpackChunkName: "presto-parser" */ 'parse/sql/presto/prestoAutocompleteParser')
+  presto: () => import(/* webpackChunkName: "presto-parser" */ 'parse/sql/presto/prestoAutocompleteParser'),
+  yellowbrick: () => import(/* webpackChunkName: "yellowbrick-parser" */ 'parse/sql/yellowbrick/yellowbrickAutocompleteParser')
 };
 const SYNTAX_MODULES = {
   calcite: () => import(/* webpackChunkName: "calcite-parser" */ 'parse/sql/calcite/calciteSyntaxParser'),
@@ -44,7 +45,8 @@ const SYNTAX_MODULES = {
   impala: () => import(/* webpackChunkName: "impala-parser" */ 'parse/sql/impala/impalaSyntaxParser'),
   ksql: () => import(/* webpackChunkName: "ksql-parser" */ 'parse/sql/ksql/ksqlSyntaxParser'),
   phoenix: () => import(/* webpackChunkName: "phoenix-parser" */ 'parse/sql/phoenix/phoenixSyntaxParser'),
-  presto: () => import(/* webpackChunkName: "presto-parser" */ 'parse/sql/presto/prestoSyntaxParser')
+  presto: () => import(/* webpackChunkName: "presto-parser" */ 'parse/sql/presto/prestoSyntaxParser'),
+  yellowbrick: () => import(/* webpackChunkName: "yellowbrick-parser" */ 'parse/sql/yellowbrick/yellowbrickSyntaxParser')
 };
 /* eslint-enable */
 
