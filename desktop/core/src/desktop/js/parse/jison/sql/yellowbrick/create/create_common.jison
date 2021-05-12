@@ -17,7 +17,7 @@
 DataDefinition_EDIT
  : 'CREATE' 'CURSOR'
    {
-     parser.suggestKeywords(['DATABASE', 'ROLE', 'SCHEMA', 'TABLE', 'VIEW']);
+     parser.suggestKeywords(['DATABASE', 'ROLE', 'SCHEMA', 'TABLE', 'VIEW', 'EXTERNAL']);
    }
  ;
 

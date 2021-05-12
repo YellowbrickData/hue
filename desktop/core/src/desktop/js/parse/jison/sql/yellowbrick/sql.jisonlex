@@ -115,6 +115,9 @@
 'WHERE'                                    { return 'WHERE'; }
 'WITH'                                     { parser.determineCase(yytext); parser.addStatementTypeLocation('WITH', yylloc); return 'WITH'; }
 
+// Yellowbrick
+'LOAD'                                     { parser.determineCase(yytext); parser.addStatementTypeLocation('LOAD', yylloc, yy.lexer.upcomingInput()); return 'LOAD'; }
+
 // Non-reserved Keywords
 'OVER'                                     { return 'OVER'; }
 'ROLE'                                     { return 'ROLE'; }
