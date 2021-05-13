@@ -117,6 +117,12 @@
 
 // Yellowbrick
 'LOAD'                                     { parser.determineCase(yytext); parser.addStatementTypeLocation('LOAD', yylloc, yy.lexer.upcomingInput()); return 'LOAD'; }
+'SOURCE'                                   { return 'SOURCE'; }
+'FIELDS'                                   { return 'FIELDS'; }
+'EXTERNAL'                                 { return 'EXTERNAL'; }
+'STORAGE'                                  { return 'STORAGE'; }
+'LOCATION'                                 { return 'LOCATION'; }
+'FORMAT'                                   { return 'FORMAT'; }
 
 // Non-reserved Keywords
 'OVER'                                     { return 'OVER'; }

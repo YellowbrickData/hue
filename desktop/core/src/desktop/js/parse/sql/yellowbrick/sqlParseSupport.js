@@ -577,6 +577,9 @@ const initSqlParser = function (parser) {
     ) {
       delete parser.yy.result.suggestTables;
       delete parser.yy.result.suggestDatabases;
+      delete parser.yy.result.suggestExternalLocations;
+      delete parser.yy.result.suggestExternalStorage;
+      delete parser.yy.result.suggestExternalFormats;
     }
     if (typeof parser.yy.result.suggestColumns !== 'undefined') {
       const suggestColumns = parser.yy.result.suggestColumns;
@@ -586,6 +589,9 @@ const initSqlParser = function (parser) {
       } else {
         delete parser.yy.result.suggestTables;
         delete parser.yy.result.suggestDatabases;
+        delete parser.yy.result.suggestExternalLocations;
+        delete parser.yy.result.suggestExternalStorage;
+        delete parser.yy.result.suggestExternalFormats;
 
         suggestColumns.tables.forEach(table => {
           if (
@@ -1189,6 +1195,18 @@ const initSqlParser = function (parser) {
 
   parser.suggestTables = function (details) {
     parser.yy.result.suggestTables = details || {};
+  };
+
+  parser.suggestExternalLocations = function (details) {
+    parser.yy.result.suggestExternalLocations = details || {};
+  };
+
+  parser.suggestExternalStorage = function (details) {
+    parser.yy.result.suggestExternalStorage = details || {};
+  };
+
+  parser.suggestExternalFormats = function (details) {
+    parser.yy.result.suggestExternalFormats = details || {};
   };
 
   parser.firstDefined = function () {
