@@ -128,6 +128,7 @@
 'REGION'                                   { return 'REGION'; }
 'IDENTITY'                                 { return 'IDENTITY'; }
 'CREDENTIAL'                               { return 'CREDENTIAL'; }
+'PATH'                                     { return 'PATH'; }
 
 // Non-reserved Keywords
 'OVER'                                     { return 'OVER'; }

@@ -110,3 +110,58 @@ ExternalStorageDefinitionRightPart_EDIT
  }
  | SchemaQualifiedIdentifier 'TYPE' StorageType 'ENDPOINT' EndpointType 'REGION' RegionType IdentityAndCredential_EDIT
  ;
+
+
+// EXTERNAL LOCATION
+
+ExternalLocationDefinition
+ : 'CREATE' 'EXTERNAL' 'LOCATION' OptionalIfNotExists ExternalLocationDefinitionRightPart
+ ;
+
+ExternalLocationDefinition_EDIT
+ : 'CREATE' 'EXTERNAL' 'LOCATION' OptionalIfNotExists 'CURSOR'
+   {
+     if (!$4) {
+       parser.suggestKeywords(['IF NOT EXISTS']);
+     }
+     parser.suggestDatabases({ appendDot: true });
+   }
+ | 'CREATE' 'EXTERNAL' 'LOCATION' OptionalIfNotExists 'CURSOR' ExternalLocationDefinitionRightPart
+   {
+     if (!$4) {
+       parser.suggestKeywords(['IF NOT EXISTS']);
+     }
+   }
+ | 'CREATE' 'EXTERNAL' 'LOCATION' OptionalIfNotExists ExternalLocationDefinitionRightPart_EDIT
+ | 'CREATE' 'EXTERNAL' 'LOCATION' OptionalIfNotExists_EDIT
+ ;
+
+ExternalLocationDefinitionRightPart
+ : SchemaQualifiedIdentifier 'PATH' PathType 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier OptionalExternalFormat
+ ;
+
+PathType
+ : SingleQuotedValue
+ ;
+
+OptionalExternalFormat
+ :
+ | 'EXTERNAL' 'FORMAT' SchemaQualifiedIdentifier
+ ;
+
+ExternalLocationDefinitionRightPart_EDIT
+ : SchemaQualifiedIdentifier 'CURSOR'
+ {
+   parser.suggestKeywords(['PATH']);
+ }
+ | SchemaQualifiedIdentifier 'PATH' PathType 'CURSOR'
+ {
+   parser.suggestKeywords(['EXTERNAL STORAGE']);
+ }
+ | SchemaQualifiedIdentifier 'PATH' PathType 'EXTERNAL' 'STORAGE' SchemaQualifiedIdentifier_EDIT
+ | SchemaQualifiedIdentifier 'PATH' PathType 'EXTERNAL' 'STORAGE' SchemaQualifiedIdentifier 'CURSOR'
+ {
+   parser.suggestKeywords(['EXTERNAL FORMAT']);
+ }
+ | SchemaQualifiedIdentifier 'PATH' PathType 'EXTERNAL' 'STORAGE' SchemaQualifiedIdentifier 'EXTERNAL' 'FORMAT' SchemaQualifiedIdentifier_EDIT
+ ;
