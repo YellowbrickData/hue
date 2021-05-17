@@ -1,3 +1,50 @@
+// EXTERNAL COMMON
+
+WithClause
+ : 'WITH' ParenthesizedWithOptionsList
+ ;
+
+ParenthesizedWithOptionsList
+ : '(' WithOptionList ')'
+ ;
+
+WithOptionList
+ : WithOption
+ | WithOptionList ',' WithOption
+ ;
+
+WithOption
+ : SingleQuotedValue SingleQuotedValue
+ ;
+
+ParenthesizedWithOptionsList_EDIT
+ : 'CURSOR'
+ {
+   parser.suggestKeywords(['WITH (']);
+ }
+ | '(' 'CURSOR' RightParenthesisOrError
+ {
+   parser.suggestKeywords([')']);
+ }
+ ;
+
+/*
+WithOptionsList_EDIT
+ : WithOptionValue_EDIT
+ | WithOptionValue 'CURSOR'
+   {
+     parser.suggestKeywords([',']);
+   }
+ | WithOptionsList ',' WithOptionsList_EDIT
+ ;
+
+WithOptionValue_EDIT
+ : SingleQuotedValue_EDIT
+ | SingleQuotedValue SingleQuotedValue_EDIT
+ ;
+*/
+
+// EXTERNAL OBJECTS
 
 DataDefinition
  : ExternalDefinition
@@ -164,4 +211,55 @@ ExternalLocationDefinitionRightPart_EDIT
    parser.suggestKeywords(['EXTERNAL FORMAT']);
  }
  | SchemaQualifiedIdentifier 'PATH' PathType 'EXTERNAL' 'STORAGE' SchemaQualifiedIdentifier 'EXTERNAL' 'FORMAT' SchemaQualifiedIdentifier_EDIT
+ ;
+
+
+// EXTERNAL FORMAT
+
+ExternalFormatDefinition
+ : 'CREATE' 'EXTERNAL' 'FORMAT' OptionalIfNotExists ExternalFormatDefinitionRightPart
+ ;
+
+ExternalFormatDefinition_EDIT
+ : 'CREATE' 'EXTERNAL' 'FORMAT' OptionalIfNotExists 'CURSOR'
+   {
+     if (!$4) {
+       parser.suggestKeywords(['IF NOT EXISTS']);
+     }
+     parser.suggestDatabases({ appendDot: true });
+   }
+ | 'CREATE' 'EXTERNAL' 'FORMAT' OptionalIfNotExists 'CURSOR' ExternalFormatDefinitionRightPart
+   {
+     if (!$4) {
+       parser.suggestKeywords(['IF NOT EXISTS']);
+     }
+   }
+ | 'CREATE' 'EXTERNAL' 'FORMAT' OptionalIfNotExists ExternalFormatDefinitionRightPart_EDIT
+ | 'CREATE' 'EXTERNAL' 'FORMAT' OptionalIfNotExists_EDIT
+ ;
+
+ExternalFormatDefinitionRightPart
+ : SchemaQualifiedIdentifier 'TYPE' FormatType WithClause
+ ;
+
+FormatType
+ : RegularIdentifier
+ ;
+
+ExternalFormatDefinitionRightPart_EDIT
+ : SchemaQualifiedIdentifier 'CURSOR'
+ {
+   parser.suggestKeywords(['TYPE']);
+ }
+ | SchemaQualifiedIdentifier 'TYPE' 'CURSOR'
+ {
+   parser.suggestKeywords(['CSV', 'TEXT', 'BCP']);
+ }
+ /*
+ | SchemaQualifiedIdentifier 'TYPE' FormatType 'CURSOR'
+ {
+   parser.suggestKeywords(['WITH (']);
+ }
+ */
+ | SchemaQualifiedIdentifier 'TYPE' FormatType ParenthesizedWithOptionList_EDIT
  ;
