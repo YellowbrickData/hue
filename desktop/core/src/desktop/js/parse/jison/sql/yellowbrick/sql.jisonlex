@@ -123,6 +123,11 @@
 'STORAGE'                                  { return 'STORAGE'; }
 'LOCATION'                                 { return 'LOCATION'; }
 'FORMAT'                                   { return 'FORMAT'; }
+'TYPE'                                     { return 'TYPE'; }
+'ENDPOINT'                                 { return 'ENDPOINT'; }
+'REGION'                                   { return 'REGION'; }
+'IDENTITY'                                 { return 'IDENTITY'; }
+'CREDENTIAL'                               { return 'CREDENTIAL'; }
 
 // Non-reserved Keywords
 'OVER'                                     { return 'OVER'; }
