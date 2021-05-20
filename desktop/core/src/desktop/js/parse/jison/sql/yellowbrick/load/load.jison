@@ -7,9 +7,14 @@ DataDefinition
 
 LoadTableStatement
 : 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier 'FROM' LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier
+| 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier 'FROM' LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier 'WITH' WithClause
 | 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier 'FROM' LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier 'EXTERNAL' 'FORMAT' SchemaQualifiedIdentifier
+| 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier 'FROM' LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier 'EXTERNAL' 'FORMAT' SchemaQualifiedIdentifier 'WITH' WithClause
+
 | 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier 'SOURCE' 'FIELDS' LoadSourceFieldsSpec 'FROM' LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier
+| 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier 'SOURCE' 'FIELDS' LoadSourceFieldsSpec 'FROM' LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier 'WITH' WithClause
 | 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier 'SOURCE' 'FIELDS' LoadSourceFieldsSpec 'FROM' LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier 'EXTERNAL' 'FORMAT' SchemaQualifiedIdentifier
+| 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier 'SOURCE' 'FIELDS' LoadSourceFieldsSpec 'FROM' LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier 'EXTERNAL' 'FORMAT' SchemaQualifiedIdentifier 'WITH' WithClause
 ;
 
 DataDefinition_EDIT
@@ -39,10 +44,12 @@ LoadTableStatement_EDIT
   {
     parser.suggestExternalLocations();
   }
+| 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier
 | 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier 'CURSOR'
   {
-    parser.suggestKeywords(['EXTERNAL FORMAT']);
+    parser.suggestKeywords(['EXTERNAL FORMAT', 'WITH']);
   }
+| 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier 'WITH' WithClause_EDIT
 | 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier 'EXTERNAL' 'FORMAT' 'CURSOR'
   {
     parser.suggestExternalFormats();
@@ -61,14 +68,22 @@ LoadTableStatement_EDIT
   {
     parser.suggestExternalLocations();
   }
+| 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier LoadSourceFieldsSpec LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier
 | 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier LoadSourceFieldsSpec LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier 'CURSOR'
   {
-    parser.suggestKeywords(['EXTERNAL FORMAT']);
+    parser.suggestKeywords(['EXTERNAL FORMAT', 'WITH']);
   }
+| 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier LoadSourceFieldsSpec LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier 'WITH' WithClause_EDIT
 | 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier LoadSourceFieldsSpec LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier 'EXTERNAL' 'FORMAT' 'CURSOR'
   {
     parser.suggestExternalFormats();
   }
+| 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier LoadSourceFieldsSpec LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier 'EXTERNAL' 'FORMAT' SchemaQualifiedIdentifier
+| 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier LoadSourceFieldsSpec LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier 'EXTERNAL' 'FORMAT' SchemaQualifiedIdentifier 'CURSOR'
+  {
+    parser.suggestKeywords(['WITH']);
+  }
+| 'LOAD' 'TABLE' SchemaQualifiedTableIdentifier LoadSourceFieldsSpec LoadFromSpec 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier 'EXTERNAL' 'FORMAT' SchemaQualifiedIdentifier 'WITH' WithClause_EDIT
 ;
 
 LoadSourceFieldsSpec

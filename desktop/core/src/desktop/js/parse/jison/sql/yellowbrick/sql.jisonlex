@@ -129,6 +129,7 @@
 'IDENTITY'                                 { return 'IDENTITY'; }
 'CREDENTIAL'                               { return 'CREDENTIAL'; }
 'PATH'                                     { return 'PATH'; }
+'OFF'                                      { return 'OFF'; }
 
 // Non-reserved Keywords
 'OVER'                                     { return 'OVER'; }

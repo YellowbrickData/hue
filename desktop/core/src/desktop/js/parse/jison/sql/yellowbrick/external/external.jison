@@ -1,48 +1,3 @@
-// EXTERNAL COMMON
-
-WithClause
- : 'WITH' ParenthesizedWithOptionsList
- ;
-
-ParenthesizedWithOptionsList
- : '(' WithOptionList ')'
- ;
-
-WithOptionList
- : WithOption
- | WithOptionList ',' WithOption
- ;
-
-WithOption
- : SingleQuotedValue SingleQuotedValue
- ;
-
-ParenthesizedWithOptionsList_EDIT
- : 'CURSOR'
- {
-   parser.suggestKeywords(['WITH (']);
- }
- | '(' 'CURSOR' RightParenthesisOrError
- {
-   parser.suggestKeywords([')']);
- }
- ;
-
-/*
-WithOptionsList_EDIT
- : WithOptionValue_EDIT
- | WithOptionValue 'CURSOR'
-   {
-     parser.suggestKeywords([',']);
-   }
- | WithOptionsList ',' WithOptionsList_EDIT
- ;
-
-WithOptionValue_EDIT
- : SingleQuotedValue_EDIT
- | SingleQuotedValue SingleQuotedValue_EDIT
- ;
-*/
 
 // EXTERNAL OBJECTS
 
@@ -82,7 +37,7 @@ ExternalStorageDefinition_EDIT
      if (!$4) {
        parser.suggestKeywords(['IF NOT EXISTS']);
      }
-     parser.suggestDatabases({ appendDot: true });
+     parser.suggestSchemas({ appendDot: true });
    }
  | 'CREATE' 'EXTERNAL' 'STORAGE' OptionalIfNotExists 'CURSOR' ExternalStorageDefinitionRightPart
    {
@@ -95,7 +50,8 @@ ExternalStorageDefinition_EDIT
  ;
 
 ExternalStorageDefinitionRightPart
- : SchemaQualifiedIdentifier 'TYPE' StorageType 'ENDPOINT' EndpointType 'REGION' RegionType OptionalIdentityAndCredential
+ : SchemaQualifiedIdentifier 'TYPE' StorageType 'ENDPOINT' EndpointType 'REGION' RegionType
+ | SchemaQualifiedIdentifier 'TYPE' StorageType 'ENDPOINT' EndpointType 'REGION' RegionType IdentityAndCredential
  ;
 
 StorageType
@@ -118,16 +74,23 @@ RegionType_EDIT
  : SingleQuotedValue_EDIT
  ;
 
-OptionalIdentityAndCredential
- :
- | 'IDENTITY' SingleQuotedValue 'CREDENTIAL' SingleQuotedValue
+IdentityAndCredential
+ : 'IDENTITY' SingleQuotedValue 'CREDENTIAL' SingleQuotedValue
  ;
 
 IdentityAndCredential_EDIT
- : 'IDENTITY' SingleQuotedValue_EDIT
+ : 'IDENTITY' 'CURSOR'
+ {
+   parser.suggestKeywords(["''"]);
+ }
+ | 'IDENTITY' SingleQuotedValue_EDIT
  | 'IDENTITY' SingleQuotedValue 'CURSOR'
  {
-   parser.suggestKeywords(['CREDENTIAL']);
+   parser.suggestKeywords(["CREDENTIAL ''"]);
+ }
+ | 'IDENTITY' SingleQuotedValue 'CREDENTIAL' 'CURSOR'
+ {
+   parser.suggestKeywords(["''"]);
  }
  | 'IDENTITY' SingleQuotedValue 'CREDENTIAL' SingleQuotedValue_EDIT
  ;
@@ -143,17 +106,17 @@ ExternalStorageDefinitionRightPart_EDIT
  }
  | SchemaQualifiedIdentifier 'TYPE' StorageType 'CURSOR'
  {
-   parser.suggestKeywords(['ENDPOINT']);
+   parser.suggestKeywords(["ENDPOINT ''"]);
  }
  | SchemaQualifiedIdentifier 'TYPE' StorageType 'ENDPOINT' EndpointType_EDIT
  | SchemaQualifiedIdentifier 'TYPE' StorageType 'ENDPOINT' EndpointType 'CURSOR'
  {
-   parser.suggestKeywords(['REGION']);
+   parser.suggestKeywords(["REGION ''"]);
  }
  | SchemaQualifiedIdentifier 'TYPE' StorageType 'ENDPOINT' EndpointType 'REGION' RegionType_EDIT
  | SchemaQualifiedIdentifier 'TYPE' StorageType 'ENDPOINT' EndpointType 'REGION' RegionType 'CURSOR'
  {
-   parser.suggestKeywords(['IDENTITY']);
+   parser.suggestKeywords(["IDENTITY ''"]);
  }
  | SchemaQualifiedIdentifier 'TYPE' StorageType 'ENDPOINT' EndpointType 'REGION' RegionType IdentityAndCredential_EDIT
  ;
@@ -171,7 +134,7 @@ ExternalLocationDefinition_EDIT
      if (!$4) {
        parser.suggestKeywords(['IF NOT EXISTS']);
      }
-     parser.suggestDatabases({ appendDot: true });
+     parser.suggestSchemas({ appendDot: true });
    }
  | 'CREATE' 'EXTERNAL' 'LOCATION' OptionalIfNotExists 'CURSOR' ExternalLocationDefinitionRightPart
    {
@@ -184,31 +147,35 @@ ExternalLocationDefinition_EDIT
  ;
 
 ExternalLocationDefinitionRightPart
- : SchemaQualifiedIdentifier 'PATH' PathType 'EXTERNAL' 'LOCATION' SchemaQualifiedIdentifier OptionalExternalFormat
+ : SchemaQualifiedIdentifier 'PATH' PathType 'EXTERNAL' 'STORAGE' SchemaQualifiedIdentifier
+ | SchemaQualifiedIdentifier 'PATH' PathType 'EXTERNAL' 'STORAGE' SchemaQualifiedIdentifier 'EXTERNAL' 'FORMAT' SchemaQualifiedIdentifier
  ;
 
 PathType
  : SingleQuotedValue
  ;
 
-OptionalExternalFormat
- :
- | 'EXTERNAL' 'FORMAT' SchemaQualifiedIdentifier
- ;
-
 ExternalLocationDefinitionRightPart_EDIT
  : SchemaQualifiedIdentifier 'CURSOR'
  {
-   parser.suggestKeywords(['PATH']);
+   parser.suggestKeywords(["PATH ''"]);
  }
  | SchemaQualifiedIdentifier 'PATH' PathType 'CURSOR'
  {
    parser.suggestKeywords(['EXTERNAL STORAGE']);
  }
+ | SchemaQualifiedIdentifier 'PATH' PathType 'EXTERNAL' 'STORAGE' 'CURSOR'
+ {
+   parser.suggestExternalStorage();
+ }
  | SchemaQualifiedIdentifier 'PATH' PathType 'EXTERNAL' 'STORAGE' SchemaQualifiedIdentifier_EDIT
  | SchemaQualifiedIdentifier 'PATH' PathType 'EXTERNAL' 'STORAGE' SchemaQualifiedIdentifier 'CURSOR'
  {
    parser.suggestKeywords(['EXTERNAL FORMAT']);
+ }
+ | SchemaQualifiedIdentifier 'PATH' PathType 'EXTERNAL' 'STORAGE' SchemaQualifiedIdentifier 'EXTERNAL' 'FORMAT' 'CURSOR'
+ {
+   parser.suggestExternalFormats();
  }
  | SchemaQualifiedIdentifier 'PATH' PathType 'EXTERNAL' 'STORAGE' SchemaQualifiedIdentifier 'EXTERNAL' 'FORMAT' SchemaQualifiedIdentifier_EDIT
  ;
@@ -226,7 +193,7 @@ ExternalFormatDefinition_EDIT
      if (!$4) {
        parser.suggestKeywords(['IF NOT EXISTS']);
      }
-     parser.suggestDatabases({ appendDot: true });
+     parser.suggestSchemas({ appendDot: true });
    }
  | 'CREATE' 'EXTERNAL' 'FORMAT' OptionalIfNotExists 'CURSOR' ExternalFormatDefinitionRightPart
    {
@@ -239,7 +206,7 @@ ExternalFormatDefinition_EDIT
  ;
 
 ExternalFormatDefinitionRightPart
- : SchemaQualifiedIdentifier 'TYPE' FormatType WithClause
+ : SchemaQualifiedIdentifier 'TYPE' FormatType 'WITH' WithClause
  ;
 
 FormatType
@@ -253,13 +220,11 @@ ExternalFormatDefinitionRightPart_EDIT
  }
  | SchemaQualifiedIdentifier 'TYPE' 'CURSOR'
  {
-   parser.suggestKeywords(['CSV', 'TEXT', 'BCP']);
+   parser.suggestKeywords(['CSV', 'TEXT', 'BCP', 'PARQUET']);
  }
- /*
  | SchemaQualifiedIdentifier 'TYPE' FormatType 'CURSOR'
  {
-   parser.suggestKeywords(['WITH (']);
+   parser.suggestKeywords(['WITH']);
  }
- */
- | SchemaQualifiedIdentifier 'TYPE' FormatType ParenthesizedWithOptionList_EDIT
+ | SchemaQualifiedIdentifier 'TYPE' FormatType 'WITH' WithClause_EDIT
  ;

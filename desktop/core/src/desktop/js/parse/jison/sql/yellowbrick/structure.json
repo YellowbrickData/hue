@@ -56,6 +56,7 @@
     "sql_error.jison",
     "sql_main.jison",
     "sql_valueExpression.jison",
+    "sql_yellowbrick.jison",
     "autocomplete_footer.jison"
   ],
   "syntax": [
@@ -113,6 +114,7 @@
     "use/use.jison",
     "sql_main.jison",
     "sql_valueExpression.jison",
+    "sql_yellowbrick.jison",
     "syntax_footer.jison"
   ]
 }

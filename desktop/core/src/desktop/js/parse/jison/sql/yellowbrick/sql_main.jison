@@ -390,7 +390,12 @@ PartialBacktickedOrPartialCursor
  ;
 
 PartialBacktickedIdentifier
+ /**
+  * Yellowbrick uses double quoted identifiers
  : 'BACKTICK' 'PARTIAL_VALUE'
+ : 'DOUBLE_QUOTE' 'PARTIAL_VALUE'
+  */
+ : 'PARTIAL_VALUE'
  ;
 
 RightParenthesisOrError
@@ -538,8 +543,14 @@ PartitionExpression_EDIT
 
 RegularOrBacktickedIdentifier
  : RegularIdentifier
+ /**
+  * Yellowbrick uses double quoted identifiers
+
  | 'BACKTICK' 'VALUE' 'BACKTICK'  -> $2
  | 'BACKTICK' 'BACKTICK'          -> ''
+ | 'DOUBLE_QUOTE' 'VALUE' 'DOUBLE_QUOTE'  -> $2
+ | 'DOUBLE_QUOTE' 'DOUBLE_QUOTE'          -> ''
+  */
  ;
 
 // TODO: Same as SchemaQualifiedTableIdentifier?

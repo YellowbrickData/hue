@@ -577,6 +577,7 @@ const initSqlParser = function (parser) {
     ) {
       delete parser.yy.result.suggestTables;
       delete parser.yy.result.suggestDatabases;
+      delete parser.yy.result.suggestSchemas;
       delete parser.yy.result.suggestExternalLocations;
       delete parser.yy.result.suggestExternalStorage;
       delete parser.yy.result.suggestExternalFormats;
@@ -589,6 +590,7 @@ const initSqlParser = function (parser) {
       } else {
         delete parser.yy.result.suggestTables;
         delete parser.yy.result.suggestDatabases;
+        delete parser.yy.result.suggestSchemas;
         delete parser.yy.result.suggestExternalLocations;
         delete parser.yy.result.suggestExternalStorage;
         delete parser.yy.result.suggestExternalFormats;
@@ -1195,6 +1197,10 @@ const initSqlParser = function (parser) {
 
   parser.suggestTables = function (details) {
     parser.yy.result.suggestTables = details || {};
+  };
+
+  parser.suggestSchemas = function (details) {
+    parser.yy.result.suggestSchemas = details || {};
   };
 
   parser.suggestExternalLocations = function (details) {
