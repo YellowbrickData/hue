@@ -35,8 +35,29 @@ ParenthesizedWithOptionsList_EDIT
  {
    parser.suggestKeywords(["(name 'value')"]);
  }
- | '(' WithOption WithValue 'CURSOR' RightParenthesisOrError
+ | '(' WithOptionList_EDIT
+ | '(' WithOptionList_EDIT RightParenthesisOrError
+ ;
+
+WithOptionList_EDIT
+ : WithOption_EDIT
  {
    parser.suggestKeywords([',']);
+ }
+ | WithOptionList ',' WithOption_EDIT
+ | WithOptionList ',' WithOption 'CURSOR' RightParenthesisOrError
+ {
+   parser.suggestKeywords([',', ')']);
+ }
+ ;
+
+WithOption_EDIT
+ : 'CURSOR' RightParenthesisOrError
+ {
+   parser.suggestKeywords(["name 'value'"]);
+ }
+ | RegularIdentifier 'CURSOR' RightParenthesisOrError
+ {
+   parser.suggestKeywords(["''"]);
  }
  ;
